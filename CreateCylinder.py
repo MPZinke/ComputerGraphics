@@ -6,10 +6,10 @@ import math
 z_distance = 500
 
 
-def circle(diameter: int, *, z_offset: int=500, resolution: int=30) -> list[float]:
+def circle(diameter: int, *, z_offset: int=500, resolution: int=360) -> list[float]:
 	points = []
 	for x in range(resolution+1):
-		degrees = 360 // resolution * x
+		degrees = 360 / resolution * x
 		point = [diameter * math.cos(math.radians(degrees)), diameter * math.sin(math.radians(degrees)) + z_offset]
 		points.append(point)
 
@@ -19,7 +19,7 @@ def circle(diameter: int, *, z_offset: int=500, resolution: int=30) -> list[floa
 def create_cylinder(diameter, height) -> list[list[list[int]]]:
 	shapes = []
 
-	circle_xz = circle(diameter, resolution=120)
+	circle_xz = circle(diameter, resolution=360)
 	for i in range(len(circle_xz)-1):
 		# bottom half
 		start_point = [circle_xz[i][0], -int(height/2), circle_xz[i][1]+diameter]
@@ -46,10 +46,12 @@ def create_cylinder(diameter, height) -> list[list[list[int]]]:
 
 
 def write_points(shapes: list[list[list[int]]]):
-	shapes = [[[int(coordinate) for coordinate in point] for point in shape] for shape in shapes]
-	data = "\n".join(["\t\t".join([" ".join([f"{coordinate:5}" for coordinate in point]) for point in shape]) for shape in shapes])
+	# shapes = [[[int(coordinate) for coordinate in point] for point in shape] for shape in shapes]
 	with open("Cylinder.pnt", "w") as file:
-		file.write(data)
+		for shape in shapes:
+			line = "\t\t".join([" ".join([f"{coordinate:5}" for coordinate in point]) for point in shape])
+			file.write(line)
+			file.write("\n")
 
 
 def main():
